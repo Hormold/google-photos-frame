@@ -63,21 +63,30 @@ const init = async () => {
 };
 
 const runScript = async () => {
-  console.log('Start downloading #' + CURRENT_INDEX);
-
-  await pipeline(
-    got.stream(PHOTOS_INDEX[CURRENT_INDEX]),
-    fs.createWriteStream('tmp.jpeg')
-  );
-  console.log('Downloaded photo #' + CURRENT_INDEX);
+  try {
+    console.log('Start downloading #' + CURRENT_INDEX);
+    if (!PHOTOS_INDEX[CURRENT_INDEX]) {
+      CURRENT_INDEX = 0;
+      PHOTOS_INDEX = [];
+      return;
+    }
+    await pipeline(
+      got.stream(PHOTOS_INDEX[CURRENT_INDEX]),
+      fs.createWriteStream('tmp.jpeg')
+    );
+    console.log('Downloaded photo #' + CURRENT_INDEX);
     
-  const command = `python3 run.py`;
+    const command = `python3 run.py`;
 
-  exec(command, async (err, stdout, stderr) => {
+    exec(command, async (err, stdout, stderr) => {
+      CURRENT_INDEX++;
+      if (err || stderr)
+        return console.log('PyErr', err || stderr);
+    });
+  } catch (err) {
     CURRENT_INDEX++;
-    if (err || stderr)
-      return console.log('PyErr', err || stderr);
-  });
+    console.log('runScript error', err);
+  }
 };
 
 const search = async photos => {
