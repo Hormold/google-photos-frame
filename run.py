@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding:utf-8 -*-
 import sys
 import os
 from math import floor
 
-picdir = os.path.join(os.path.dirname(os.path.realpath(__file__))
+picdir = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append("/home/pi/SlowMovie/e-Paper/RaspberryPi_JetsonNano/python/lib")
 from PIL import Image,ImageDraw,ImageFont
 from waveshare_epd import epd7in5_HD
