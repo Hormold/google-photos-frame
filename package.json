@@ -1,17 +1,27 @@
 {
-  "name": "screen",
+  "name": "google-photos-frame",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Hormold",
   "license": "ISC",
   "dependencies": {
     "googleapis": "^71.0.0",
     "googlephotos": "^0.3.4",
     "got": "^11.8.2",
     "moment": "^2.29.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.9.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^8.0.0",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-prefer-arrow": "^1.1.3"
   }
 }
