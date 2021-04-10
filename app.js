@@ -29,13 +29,21 @@ const init = async () => {
   CURRENT_INDEX = 0;
 
   oauth2Client.refreshAccessToken(async (error, tokens) => {
-    console.log('Using ' + tokens.access_token);
+    console.log('Using token: ' + tokens.access_token);
     const photos = new Photos(tokens.access_token);
     (async () => {
-      while (1)
+      while (1) {
         try {
           const result = await search(photos);
-          PHOTOS_INDEX.push(pick(result), pick(result));
+          let res1 = pick(result);
+          while (PHOTOS_INDEX.includes(res1))
+            res1 = pick(result);
+          
+          let res2 = pick(result);
+          while (PHOTOS_INDEX.includes(res2))
+            res2 = pick(result);
+          
+          PHOTOS_INDEX.push(res1, res2);
           console.log(`Loaded ${PHOTOS_INDEX.length} photos!`);
           runScript();
           await sleep(60000);
@@ -45,6 +53,11 @@ const init = async () => {
           console.log(`Error, sleep`, err);
           await sleep(60000);
         }
+        if (PHOTOS_INDEX.length > 60 * 10) {
+          PHOTOS_INDEX = [];
+          CURRENT_INDEX = 0;
+        }
+      }
     })();
   });
 };
