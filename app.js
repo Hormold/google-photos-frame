@@ -22,7 +22,7 @@ const sleep = async ms => new Promise(r => setTimeout(r, ms));
 
 let CURRENT_INDEX = 0;
 let PHOTOS_INDEX = [];
-const TO_LOAD = 50;
+// const TO_LOAD = 50;
 
 const init = async () => {
   PHOTOS_INDEX = [];
@@ -32,13 +32,19 @@ const init = async () => {
     console.log('Using ' + tokens.access_token);
     const photos = new Photos(tokens.access_token);
     (async () => {
-      for (let i = 0; i <= TO_LOAD; i++) {
-        const result = await search(photos);
-        PHOTOS_INDEX.push(pick(result), pick(result));
-        console.log(`Loaded ${PHOTOS_INDEX.length} photos!`);
-        runScript();
-        await sleep(60000);
-      }
+      while (1)
+        try {
+          const result = await search(photos);
+          PHOTOS_INDEX.push(pick(result), pick(result));
+          console.log(`Loaded ${PHOTOS_INDEX.length} photos!`);
+          runScript();
+          await sleep(60000);
+        } catch (err) {
+          PHOTOS_INDEX = [];
+          CURRENT_INDEX = 0;
+          console.log(`Error, sleep`, err);
+          await sleep(60000);
+        }
     })();
   });
 };
@@ -89,9 +95,6 @@ const search = async photos => {
 
 try {
   init();
-  setInterval(() => {
-    init();
-  }, 60 * TO_LOAD * 2 * 1000);
 } catch (err) {
   console.log('err', err);
 }
