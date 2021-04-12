@@ -22,16 +22,14 @@ const sleep = async ms => new Promise(r => setTimeout(r, ms));
 
 let CURRENT_INDEX = 0;
 let PHOTOS_INDEX = [];
-// const TO_LOAD = 50;
 
 const init = async () => {
   PHOTOS_INDEX = [];
   CURRENT_INDEX = 0;
-
-  oauth2Client.refreshAccessToken(async (error, tokens) => {
-    console.log('Using token: ' + tokens.access_token);
-    const photos = new Photos(tokens.access_token);
-    (async () => {
+  try {
+    oauth2Client.refreshAccessToken(async (error, tokens) => {
+      console.log('Using token: ' + tokens.access_token);
+      const photos = new Photos(tokens.access_token);
       while (1) {
         try {
           const result = await search(photos);
@@ -53,13 +51,16 @@ const init = async () => {
           console.log(`Error, sleep`, err);
           await sleep(60000);
         }
-        if (PHOTOS_INDEX.length > 60 * 10) {
+        if (PHOTOS_INDEX.length > 120) {
           PHOTOS_INDEX = [];
           CURRENT_INDEX = 0;
         }
       }
-    })();
-  });
+    });
+  } catch (err) {
+    console.log('Main error');
+    init();
+  }
 };
 
 const runScript = async () => {
