@@ -23,15 +23,27 @@ const sleep = async ms => new Promise(r => setTimeout(r, ms));
 
 let CURRENT_INDEX = 0;
 let PHOTOS_INDEX = [];
+let needRelogin = true;
 
 const init = async () => {
   PHOTOS_INDEX = [];
   CURRENT_INDEX = 0;
   try {
     oauth2Client.refreshAccessToken(async (error, tokens) => {
+      if (error) {
+        console.log(`Error on refreshAccessToken`, error);
+        return process.exit();
+      }
+      needRelogin = false;
       console.log('Using token: ' + tokens.access_token);
       const photos = new Photos(tokens.access_token);
       while (1) {
+        if (needRelogin) {
+          console.log(`Need relogin, doing in 5 sec`);
+          setTimeout(() => init(), 5000);
+          break;
+        }
+        
         try {
           console.log('Wakeup, looking for new photos');
           const result = await search(photos);
@@ -89,6 +101,7 @@ const runScript = async () => {
   } catch (err) {
     CURRENT_INDEX++;
     console.log('runScript error', err);
+    if (err.match(/403/)) needRelogin = true;
   }
 };
 
