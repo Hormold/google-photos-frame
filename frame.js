@@ -38,6 +38,8 @@ class PhotoFrame {
         this.needRelogin = false;
         this.token = tokens.access_token;
         this.photos = new Photos(this.token);
+        this.CURRENT_INDEX = 0;
+        this.PHOTOS_INDEX = [];
 
         console.log('Using token: ' + tokens.access_token);
         resolve();
