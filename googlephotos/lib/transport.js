@@ -22,7 +22,8 @@ class Transport {
     return ky(endpoint, {
       headers: this._getHeaders(),
       searchParams: params,
-      responseType: 'json'
+      responseType: 'json',
+      timeout: 5000
     }).json();
   }
 
@@ -47,7 +48,8 @@ class Transport {
       .post(endpoint, {
         headers: this._getHeaders(),
         json: params,
-        responseType: 'json'
+        responseType: 'json',
+        timeout: 5000
       });
   }
 
