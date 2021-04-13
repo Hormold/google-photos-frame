@@ -106,7 +106,7 @@ const runScript = async () => {
   } catch (err) {
     CURRENT_INDEX++;
     console.log('runScript error', err);
-    if (err.match(/403/) || err.match(/401/)) needRelogin = true;
+    if (err.toString().match(/403/) || err.toString().match(/401/)) needRelogin = true;
   }
 };
 
@@ -135,7 +135,7 @@ const search = async photos => {
     const randomPhotos = photosList.map(f => f.baseUrl + '=w880-h528');
     return randomPhotos;
   } catch (err) {
-    if (err.match(/403/) || err.match(/401/)) needRelogin = true;
+    if (err.toString().match(/403/) || err.toString().match(/401/)) needRelogin = true;
     console.log('Photo search error', err);
     return [];
   }
