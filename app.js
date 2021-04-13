@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('console-stamp')(console, '[HH:MM:ss.l]');
 
 const { google } = require('googleapis');
 const Photos = require('./googlephotos');
@@ -32,6 +33,7 @@ const init = async () => {
       const photos = new Photos(tokens.access_token);
       while (1) {
         try {
+          console.log('Wakeup, looking for new photos');
           const result = await search(photos);
           let res1 = pick(result);
           while (PHOTOS_INDEX.includes(res1))
@@ -45,7 +47,7 @@ const init = async () => {
           console.log(`Loaded ${PHOTOS_INDEX.length} photos!`);
           await runScript();
           await sleep(60000);
-          console.log(`sleep`);
+          console.log(`All done, go to sleep!`);
         } catch (err) {
           PHOTOS_INDEX = [];
           CURRENT_INDEX = 0;
@@ -76,14 +78,13 @@ const runScript = async () => {
       got.stream(PHOTOS_INDEX[CURRENT_INDEX]),
       fs.createWriteStream('tmp.jpeg')
     );
-    console.log('Downloaded photo #' + CURRENT_INDEX);
+    console.log(`Downloaded photo #${CURRENT_INDEX}, start updating frame screen`);
     
-    const command = `python3 run.py`;
-
-    exec(command, async (err, stdout, stderr) => {
+    exec(`python3 run.py`, async (err, stdout, stderr) => {
       CURRENT_INDEX++;
       if (err || stderr)
         return console.log('PyErr', err || stderr);
+      console.log(`Frame screen update finished!`);
     });
   } catch (err) {
     CURRENT_INDEX++;
