@@ -43,8 +43,9 @@ const init = async () => {
           
           PHOTOS_INDEX.push(res1, res2);
           console.log(`Loaded ${PHOTOS_INDEX.length} photos!`);
-          runScript();
+          await runScript();
           await sleep(60000);
+          console.log(`sleep`);
         } catch (err) {
           PHOTOS_INDEX = [];
           CURRENT_INDEX = 0;
