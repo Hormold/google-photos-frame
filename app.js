@@ -47,6 +47,11 @@ const init = async () => {
         try {
           console.log('Wakeup, looking for new photos');
           const result = await search(photos);
+          if (!result.length) {
+            console.log(`Not new photos loaded, skipping!`);
+            continue;
+          }
+          
           let res1 = pick(result);
           while (PHOTOS_INDEX.includes(res1))
             res1 = pick(result);
@@ -101,7 +106,7 @@ const runScript = async () => {
   } catch (err) {
     CURRENT_INDEX++;
     console.log('runScript error', err);
-    if (err.match(/403/)) needRelogin = true;
+    if (err.match(/403/) || err.match(/401/)) needRelogin = true;
   }
 };
 
@@ -115,20 +120,25 @@ const search = async photos => {
 
   const mediaTypeFilter = new photos.MediaTypeFilter(photos.MediaType.PHOTO);
   filters.setMediaTypeFilter(mediaTypeFilter);
-
-  const { body } = await photos.mediaItems.search(filters);
-  if (!body.mediaItems || !body.mediaItems.length) {
-    console.log('Error with loading mediaItems!');
-    return search(photos);
-  }
-  const photosList = body.mediaItems.filter(
-    f =>
-      f.mediaMetadata &&
+  try {
+    const { body } = await photos.mediaItems.search(filters);
+    if (!body.mediaItems || !body.mediaItems.length) {
+      console.log('Error with loading mediaItems!');
+      return search(photos);
+    }
+    const photosList = body.mediaItems.filter(
+      f =>
+        f.mediaMetadata &&
             f.mediaMetadata.photo.cameraMake &&
             +f.mediaMetadata.width > +f.mediaMetadata.height
-  );
-  const randomPhotos = photosList.map(f => f.baseUrl + '=w880-h528');
-  return randomPhotos;
+    );
+    const randomPhotos = photosList.map(f => f.baseUrl + '=w880-h528');
+    return randomPhotos;
+  } catch (err) {
+    if (err.match(/403/) || err.match(/401/)) needRelogin = true;
+    console.log('Photo search error', err);
+    return [];
+  }
 };
 
 try {
