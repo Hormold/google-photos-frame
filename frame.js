@@ -80,13 +80,13 @@ class PhotoFrame {
       } else
         console.log(`Loaded ${result.length} photos!`);
 
-      let res1 = pick(result);
-      while (this.PHOTOS_INDEX.includes(res1))
-        res1 = pick(result);
+      const res1 = pick(result);
+      // while (this.PHOTOS_INDEX.includes(res1))
+      //  res1 = pick(result);
         
-      let res2 = pick(result);
-      while (this.PHOTOS_INDEX.includes(res2))
-        res2 = pick(result);
+      const res2 = pick(result);
+      // while (this.PHOTOS_INDEX.includes(res2))
+      //  res2 = pick(result);
           
       this.PHOTOS_INDEX.push(res1, res2);
       try {
